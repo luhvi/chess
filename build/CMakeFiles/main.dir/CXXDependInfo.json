@@ -1,0 +1,31 @@
+{
+	"bmi-installation" : null,
+	"compiler-frontend-variant" : "GNU",
+	"compiler-id" : "GNU",
+	"compiler-simulate-id" : "",
+	"config" : "",
+	"cxx-modules" : {},
+	"database-info" : null,
+	"dir-cur-bld" : "C:/Users/tore/Projects/chess/build",
+	"dir-cur-src" : "C:/Users/tore/Projects/chess",
+	"dir-top-bld" : "C:/Users/tore/Projects/chess/build",
+	"dir-top-src" : "C:/Users/tore/Projects/chess",
+	"exports" : [],
+	"forward-modules-from-target-dirs" : [],
+	"include-dirs" : 
+	[
+		"C:\\Users\\tore\\Projects\\chess\\include",
+		"_deps\\sfml-src\\include"
+	],
+	"language" : "CXX",
+	"linked-target-dirs" : [],
+	"module-dir" : "C:/Users/tore/Projects/chess/build/CMakeFiles/main.dir",
+	"sources" : 
+	{
+		"CMakeFiles/main.dir/src/main.cpp.obj" : 
+		{
+			"language" : "CXX",
+			"source" : "C:/Users/tore/Projects/chess/src/main.cpp"
+		}
+	}
+}
