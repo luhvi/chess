@@ -108008,77 +108008,91 @@ void sleep(Time duration);
 enum class Color
 {
   white,
-  black
+  black,
+};
+
+struct PieceTextures
+{
+  sf::Texture pawn, bishop, knight, rook, queen, king;
+
+  void loadForColor(const std::string& colorPrefix)
+  {
+    pawn.loadFromFile("pieces/" + colorPrefix + "-pawn.png");
+    bishop.loadFromFile("pieces/" + colorPrefix + "-bishop.png");
+    knight.loadFromFile("pieces/" + colorPrefix + "-knight.png");
+    rook.loadFromFile("pieces/" + colorPrefix + "-rook.png");
+    queen.loadFromFile("pieces/" + colorPrefix + "-queen.png");
+    king.loadFromFile("pieces/" + colorPrefix + "-king.png");
+  }
 };
 
 struct Pos
 {
-  int x{};
-  int y{};
+  int m_x{};
+  int m_y{};
 };
 
 class Pieces
 {
   private:
-    Color color;
-    std::vector<Pos> pawns;
-    std::vector<Pos> bishops;
-    std::vector<Pos> knights;
-    std::vector<Pos> rooks;
-    std::vector<Pos> queens;
-    Pos king;
+    Color m_color;
+    std::vector<Pos> m_pawns;
+    std::vector<Pos> m_bishops;
+    std::vector<Pos> m_knights;
+    std::vector<Pos> m_rooks;
+    std::vector<Pos> m_queens;
+    Pos m_king;
 
   public:
-    Pieces(int firstY, int secondY, Color teamColor)
-      : color{teamColor}
-      , king{5, firstY}
+    Pieces(int firstY, int secondY, Color color)
+      : m_color{color}
+      , m_king{5, firstY}
     {
       for (int x{1}; x <= 8; x++)
       {
-        pawns.push_back({x, secondY});
+        m_pawns.push_back({x, secondY});
       }
 
       for (int x : {3, 6})
       {
-        bishops.push_back({x, firstY});
+        m_bishops.push_back({x, firstY});
       }
 
       for (int x : {2, 7})
       {
-        knights.push_back({x, firstY});
+        m_knights.push_back({x, firstY});
       }
 
       for (int x : {1, 8})
       {
-        rooks.push_back({x, firstY});
+        m_rooks.push_back({x, firstY});
       }
 
-      queens.push_back({4, firstY});
+      m_queens.push_back({4, firstY});
     }
 
-    const Color& getColor() const { return color; }
-
-    const std::vector<Pos>& getPawns() const { return pawns; }
-    const std::vector<Pos>& getBishops() const { return bishops; }
-    const std::vector<Pos>& getKnights() const { return knights; }
-    const std::vector<Pos>& getRooks() const { return rooks; }
-    const std::vector<Pos>& getQueens() const { return queens; }
-    const Pos& getKing() const { return king; }
+    const Color& getColor() const { return m_color; }
+    const std::vector<Pos>& getPawns() const { return m_pawns; }
+    const std::vector<Pos>& getBishops() const { return m_bishops; }
+    const std::vector<Pos>& getKnights() const { return m_knights; }
+    const std::vector<Pos>& getRooks() const { return m_rooks; }
+    const std::vector<Pos>& getQueens() const { return m_queens; }
+    const Pos& getKing() const { return m_king; }
 };
 
-std::vector<sf::Sprite> renderPawns(const Pieces& pieces, float squareSize, float offset, const sf::Texture& texture)
+std::vector<sf::Sprite> renderPieces(const std::vector<Pos>& positions, float squareSize, float offset, const sf::Texture& texture)
 {
   std::vector<sf::Sprite> spriteArr;
 
-  for (const auto& pos : pieces.getPawns())
+  for (const auto& pos : positions)
   {
     sf::Sprite sprite(texture);
 
     const float scale{squareSize / texture.getSize().x};
     sprite.setScale({scale, scale});
 
-    const float posX{offset + (pos.x - 1) * squareSize};
-    const float posY{offset + (8 - pos.y) * squareSize};
+    const float posX{offset + (pos.m_x - 1) * squareSize};
+    const float posY{offset + (8 - pos.m_y) * squareSize};
 
     sprite.setPosition({posX, posY});
 
@@ -108088,103 +108102,15 @@ std::vector<sf::Sprite> renderPawns(const Pieces& pieces, float squareSize, floa
   return spriteArr;
 }
 
-std::vector<sf::Sprite> renderBishops(const Pieces& pieces, float squareSize, float offset, const sf::Texture& texture)
-{
-  std::vector<sf::Sprite> spriteArr;
-
-  for (const auto& pos : pieces.getBishops())
-  {
-    sf::Sprite sprite(texture);
-
-    const float scale{squareSize / texture.getSize().x};
-    sprite.setScale({scale, scale});
-
-    const float posX{offset + (pos.x - 1) * squareSize};
-    const float posY{offset + (8 - pos.y) * squareSize};
-
-    sprite.setPosition({posX, posY});
-
-    spriteArr.push_back(sprite);
-  }
-
-  return spriteArr;
-}
-
-std::vector<sf::Sprite> renderKnights(const Pieces& pieces, float squareSize, float offset, const sf::Texture& texture)
-{
-  std::vector<sf::Sprite> spriteArr;
-
-  for (const auto& pos : pieces.getKnights())
-  {
-    sf::Sprite sprite(texture);
-
-    const float scale{squareSize / texture.getSize().x};
-    sprite.setScale({scale, scale});
-
-    const float posX{offset + (pos.x - 1) * squareSize};
-    const float posY{offset + (8 - pos.y) * squareSize};
-
-    sprite.setPosition({posX, posY});
-
-    spriteArr.push_back(sprite);
-  }
-
-  return spriteArr;
-}
-
-std::vector<sf::Sprite> renderRooks(const Pieces& pieces, float squareSize, float offset, const sf::Texture& texture)
-{
-  std::vector<sf::Sprite> spriteArr;
-
-  for (const auto& pos : pieces.getRooks())
-  {
-    sf::Sprite sprite(texture);
-
-    const float scale{squareSize / texture.getSize().x};
-    sprite.setScale({scale, scale});
-
-    const float posX{offset + (pos.x - 1) * squareSize};
-    const float posY{offset + (8 - pos.y) * squareSize};
-
-    sprite.setPosition({posX, posY});
-
-    spriteArr.push_back(sprite);
-  }
-
-  return spriteArr;
-}
-
-std::vector<sf::Sprite> renderQueens(const Pieces& pieces, float squareSize, float offset, const sf::Texture& texture)
-{
-  std::vector<sf::Sprite> spriteArr;
-
-  for (const auto& pos : pieces.getQueens())
-  {
-    sf::Sprite sprite(texture);
-
-    const float scale{squareSize / texture.getSize().x};
-    sprite.setScale({scale, scale});
-
-    const float posX{offset + (pos.x - 1) * squareSize};
-    const float posY{offset + (8 - pos.y) * squareSize};
-
-    sprite.setPosition({posX, posY});
-
-    spriteArr.push_back(sprite);
-  }
-
-  return spriteArr;
-}
-
-sf::Sprite renderKing(const Pieces& pieces, float squareSize, float offset, const sf::Texture& texture)
+sf::Sprite renderKing(const Pos& pos, float squareSize, float offset, const sf::Texture& texture)
 {
   sf::Sprite sprite(texture);
 
   const float scale{squareSize / texture.getSize().x};
   sprite.setScale({scale, scale});
 
-  const float posX{offset + (pieces.getKing().x - 1) * squareSize};
-  const float posY{offset + (8 - pieces.getKing().y) * squareSize};
+  const float posX{offset + (pos.m_x - 1) * squareSize};
+  const float posY{offset + (8 - pos.m_y) * squareSize};
 
   sprite.setPosition({posX, posY});
 
@@ -108198,41 +108124,9 @@ int main()
   sf::RenderWindow window(sf::VideoMode({windowSize, windowSize}), "Chess");
   window.setFramerateLimit(30);
 
-  sf::Texture whitePawnTexture;
-  whitePawnTexture.loadFromFile("pieces/white-pawn.png");
-
-  sf::Texture whiteBishopTexture;
-  whiteBishopTexture.loadFromFile("pieces/white-bishop.png");
-
-  sf::Texture whiteKnightTexture;
-  whiteKnightTexture.loadFromFile("pieces/white-knight.png");
-
-  sf::Texture whiteRookTexture;
-  whiteRookTexture.loadFromFile("pieces/white-rook.png");
-
-  sf::Texture whiteQueenTexture;
-  whiteQueenTexture.loadFromFile("pieces/white-queen.png");
-
-  sf::Texture whiteKingTexture;
-  whiteKingTexture.loadFromFile("pieces/white-king.png");
-
-  sf::Texture blackPawnTexture;
-  blackPawnTexture.loadFromFile("pieces/black-pawn.png");
-
-  sf::Texture blackBishopTexture;
-  blackBishopTexture.loadFromFile("pieces/black-bishop.png");
-
-  sf::Texture blackKnightTexture;
-  blackKnightTexture.loadFromFile("pieces/black-knight.png");
-
-  sf::Texture blackRookTexture;
-  blackRookTexture.loadFromFile("pieces/black-rook.png");
-
-  sf::Texture blackQueenTexture;
-  blackQueenTexture.loadFromFile("pieces/black-queen.png");
-
-  sf::Texture blackKingTexture;
-  blackKingTexture.loadFromFile("pieces/black-king.png");
+  PieceTextures whiteTextures, blackTextures;
+  whiteTextures.loadForColor("white");
+  blackTextures.loadForColor("black");
 
   const int spaces{64};
 
@@ -108270,71 +108164,29 @@ int main()
 
       window.draw(space);
     }
+    for (const auto& sprite : renderPieces(white.getPawns(), squareSize, offset, whiteTextures.pawn))
+      window.draw(sprite);
+    for (const auto& sprite : renderPieces(white.getBishops(), squareSize, offset, whiteTextures.bishop))
+      window.draw(sprite);
+    for (const auto& sprite : renderPieces(white.getKnights(), squareSize, offset, whiteTextures.knight))
+      window.draw(sprite);
+    for (const auto& sprite : renderPieces(white.getRooks(), squareSize, offset, whiteTextures.rook))
+      window.draw(sprite);
+    for (const auto& sprite : renderPieces(white.getQueens(), squareSize, offset, whiteTextures.queen))
+      window.draw(sprite);
+    window.draw(renderKing(white.getKing(), squareSize, offset, whiteTextures.king));
 
-    auto whitePawns{renderPawns(white, squareSize, offset, whitePawnTexture)};
-    for (const auto& pawn : whitePawns)
-    {
-      window.draw(pawn);
-    }
-
-    auto whiteBishops{renderBishops(white, squareSize, offset, whiteBishopTexture)};
-    for (const auto& bishop : whiteBishops)
-    {
-      window.draw(bishop);
-    }
-
-    auto whiteKnights{renderKnights(white, squareSize, offset, whiteKnightTexture)};
-    for (const auto& knight : whiteKnights)
-    {
-      window.draw(knight);
-    }
-
-    auto whiteRooks{renderRooks(white, squareSize, offset, whiteRookTexture)};
-    for (const auto& rook : whiteRooks)
-    {
-      window.draw(rook);
-    }
-
-    auto whiteQueens{renderQueens(white, squareSize, offset, whiteQueenTexture)};
-    for (const auto& queen : whiteQueens)
-    {
-      window.draw(queen);
-    }
-
-    auto whiteKing{renderKing(white, squareSize, offset, whiteKingTexture)};
-    window.draw(whiteKing);
-
-    auto blackPawns{renderPawns(black, squareSize, offset, blackPawnTexture)};
-    for (const auto& pawn : blackPawns)
-    {
-      window.draw(pawn);
-    }
-
-    auto blackBishops{renderBishops(black, squareSize, offset, blackBishopTexture)};
-    for (const auto& bishop : blackBishops)
-    {
-      window.draw(bishop);
-    }
-
-    auto blackKnights{renderKnights(black, squareSize, offset, blackKnightTexture)};
-    for (const auto& knight : blackKnights)
-    {
-      window.draw(knight);
-    }
-
-    auto blackRooks{renderRooks(black, squareSize, offset, blackRookTexture)};
-    for (const auto& rook : blackRooks)
-    {
-      window.draw(rook);
-    }
-
-    auto blackQueens{renderQueens(black, squareSize, offset, blackQueenTexture)};
-    for (const auto& queen : blackQueens)
-    {
-      window.draw(queen);
-    }
-    auto blackKing{renderKing(black, squareSize, offset, blackKingTexture)};
-    window.draw(blackKing);
+    for (const auto& sprite : renderPieces(black.getPawns(), squareSize, offset, blackTextures.pawn))
+      window.draw(sprite);
+    for (const auto& sprite : renderPieces(black.getBishops(), squareSize, offset, blackTextures.bishop))
+      window.draw(sprite);
+    for (const auto& sprite : renderPieces(black.getKnights(), squareSize, offset, blackTextures.knight))
+      window.draw(sprite);
+    for (const auto& sprite : renderPieces(black.getRooks(), squareSize, offset, blackTextures.rook))
+      window.draw(sprite);
+    for (const auto& sprite : renderPieces(black.getQueens(), squareSize, offset, blackTextures.queen))
+      window.draw(sprite);
+    window.draw(renderKing(black.getKing(), squareSize, offset, blackTextures.king));
 
     window.display();
   }
