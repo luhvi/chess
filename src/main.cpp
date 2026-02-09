@@ -5,12 +5,6 @@
 #include <vector>
 #include <string>
 
-enum class Color
-{
-  white,
-  black,
-};
-
 struct PieceTextures
 {
   sf::Texture pawn, bishop, knight, rook, queen, king;
@@ -34,6 +28,13 @@ struct Pos
 
 class Pieces
 {
+  public:
+  enum Color
+  {
+    white,
+    black,
+  };
+
   private:
     Color m_color;
     std::vector<Pos> m_pawns;
@@ -134,8 +135,8 @@ int main()
   const float boardSize{squareSize * 8.f};
   const float offset{(windowSize - boardSize) / 2.f};
 
-  Pieces white{1, 2, Color::white};
-  Pieces black{8, 7, Color::black};
+  Pieces white{1, 2, Pieces::white};
+  Pieces black{8, 7, Pieces::black};
 
   while (window.isOpen())
   {
